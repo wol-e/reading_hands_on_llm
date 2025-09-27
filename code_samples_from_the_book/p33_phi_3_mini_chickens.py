@@ -32,7 +32,7 @@ generator = pipeline(
 
 # Prompt
 messages = [
-    {"role": "user", "content": "Create a funny joke about chickens."}
+    {"role": "user", "content": "Tell me something profound."}
 ]
 
 # Generate

@@ -1,16 +1,19 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+import torch
 
-# Load model and tokenizer
+# Load tokenizer
 tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-4k-instruct")
 
+# Load model with 8-bit quantization and automatic device placement
 model = AutoModelForCausalLM.from_pretrained(
     "microsoft/Phi-3-mini-4k-instruct",
-    device_map="cuda",
-    torch_dtype="auto",
+    device_map="auto",          # automatically splits model across GPUs/CPU
+    load_in_8bit=True,          # enable 8-bit quantization
+    torch_dtype=torch.float16,  # for non-quantized parts
     trust_remote_code=False,
 )
 
-# Create a pipeline
+# Create a pipeline WITHOUT the device argument
 generator = pipeline(
     "text-generation",
     model=model,
@@ -22,14 +25,6 @@ generator = pipeline(
 
 prompt = "The capital of France is"
 
-# Tokenize the input prompt
-input_ids = tokenizer(prompt, return_tensors="pt").input_ids
-
-# Tokenize the input prompt
-input_ids = input_ids.to("cuda")
-
-# Get the output of the model before the lm_head
-model_output = model.model(input_ids)
-
-# Get the output of the lm_head
-lm_head_output = model.lm_head(model_output[0])
+# Generate text
+output = generator(prompt)
+print(output[0]['generated_text'])

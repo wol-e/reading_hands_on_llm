@@ -25,6 +25,22 @@ generator = pipeline(
 
 prompt = "The capital of France is"
 
-# Generate text
-output = generator(prompt)
-print(output[0]['generated_text'])
+# Tokenize the input prompt
+input_ids = tokenizer(prompt, return_tensors="pt").input_ids
+input_ids = input_ids.to("cuda")
+
+# Get model outputs
+model_output = model.model(input_ids)
+lm_head_output = model.lm_head(model_output[0])
+
+# Get logits for the last token
+logits = lm_head_output[0, -1]
+
+# Get top 5 token IDs and their probabilities
+topk = torch.topk(logits, k=5)
+top_ids = topk.indices
+top_probs = torch.softmax(topk.values, dim=-1)
+
+# Print top 5 tokens with probabilities
+for token_id, prob in zip(top_ids, top_probs):
+    print(f"{tokenizer.decode(token_id)}\t{prob.item():.4f}")

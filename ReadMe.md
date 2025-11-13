@@ -1,4 +1,4 @@
-I started reading the O'Reilly book "Hands-On Large Language Models". In this repo I collect code for excersises and deeper understanding. Note my GPUs VRAM is only 6GB, so I might need to quickly move from doing thngs locally to some cloud environment.
+Vompanion code from reading the O'Reilly book "Hands-On Large Language Models"
 
 general reference:
 https://github.com/HandsOnLLM/Hands-On-Large-Language-Models 
